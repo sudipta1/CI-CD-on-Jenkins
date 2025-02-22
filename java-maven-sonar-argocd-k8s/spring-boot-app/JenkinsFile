@@ -1,0 +1,102 @@
+pipeline {
+  agent {
+    docker {
+      image 'sudipta244/docker-agent:v1'
+      args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+    }
+  }
+
+  environment {
+    AWS_REGION = "us-east-1"  // Change this to your AWS region
+    ECR_REPOSITORY = "ultimateci-cd"  // Change this to your ECR repo name
+    AWS_ACCOUNT_ID = "365657944743"  // Change this to your AWS Account ID
+  }
+
+stages {
+    stage('Build and Test') {
+      steps {
+        sh 'ls -ltr'
+        // build the project and create a JAR file
+        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+      }
+    }
+    stage('Static Code Analysis') {
+      environment {
+        SONAR_URL = "https://0b2e-171-61-141-114.ngrok-free.app"
+      }
+      steps {
+        withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+          sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+        }
+      }
+    }
+    stage('Install AWS CLI') {
+      steps {
+        sh '''
+          apt-get update && apt-get install -y awscli
+          aws --version
+        '''
+      }
+    }
+    stage('Configure AWS CLI') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          sh '''
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set region $AWS_REGION
+          '''
+        }
+      }
+    }
+   stage('Login to AWS ECR') {
+      steps {
+        script {
+          sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        }
+      }
+    }
+    stage('Build and Push Docker Image to ECR') {
+      environment {
+        DOCKER_IMAGE = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${BUILD_NUMBER}"
+      }
+      steps {
+        script {
+          sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
+          sh "docker push ${DOCKER_IMAGE}"
+        }
+      }
+    }
+    stage('Update Deployment File') {
+        environment {
+            GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
+            GIT_USER_NAME = "sudipta1"
+        }
+        steps {
+            withCredentials([string(credentialsId: 'sudipta1', variable: 'GITHUB_TOKEN')]) {
+                sh '''
+                    git config user.email "sudipta.nayak244@gmail.com"
+                    git config user.name "Sudipta Nayak"
+                    BUILD_NUMBER=${BUILD_NUMBER}
+                    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                    git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                '''
+            }
+        }
+    }
+}
+
+  post {
+    success {
+      slackSend channel: '#all-owner-devops', message: "✅ Build #${BUILD_NUMBER} succeeded! 🎉"
+    }
+    failure {
+      slackSend channel: '#all-owner-devops', message: "❌ Build #${BUILD_NUMBER} failed! Check Jenkins logs. 🔍"
+    }
+    always {
+      slackSend channel: '#all-owner-devops', message: "📢 Build #${BUILD_NUMBER} completed."
+    }
+  }
+}
