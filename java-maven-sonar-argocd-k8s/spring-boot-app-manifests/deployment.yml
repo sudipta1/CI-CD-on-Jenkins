@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: sudipta244/ultimate-cicd:16
+        image: 365657944743.dkr.ecr.us-east-1.amazonaws.com/ultimateci-cd:16
         ports:
         - containerPort: 8080
