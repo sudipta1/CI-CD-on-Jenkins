@@ -16,7 +16,7 @@ stages {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/sudipta1/CI-CD-on-Jenkins'
+        //git branch: 'main', url: 'https://github.com/sudipta1/CI-CD-on-Jenkins-ArgoCD'
         sh 'ls -lR'
       }
     }
@@ -69,7 +69,7 @@ stages {
     }
     stage('Update Deployment File') {
         environment {
-            GIT_REPO_NAME = "CI-CD-on-Jenkins"
+            GIT_REPO_NAME = "CI-CD-on-Jenkins-ArgoCD"
             GIT_USER_NAME = "sudipta1"
         }
         steps {
