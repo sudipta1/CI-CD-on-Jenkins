@@ -5,7 +5,7 @@ pipeline {
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
   }
-
+  
   environment {
     AWS_REGION = "us-east-1"  // Change this to your AWS region
     ECR_REPOSITORY = "ultimateci-cd"  // Change this to your ECR repo name
@@ -13,12 +13,18 @@ pipeline {
   }
 
 stages {
+    stage('Checkout') {
+      steps {
+        sh 'echo passed'
+        //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
+        sh 'ls -lR'
+      }
+    }
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
         // build the project and create a JAR file
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
-        sh 'ls -lR'
       }
     }
     stage('Static Code Analysis') {
@@ -87,17 +93,4 @@ stages {
             }
         }
     }
-}
-
-  post {
-    success {
-      slackSend channel: '#all-owner-devops', message: "✅ Build #${BUILD_NUMBER} succeeded! 🎉"
-    }
-    failure {
-      slackSend channel: '#all-owner-devops', message: "❌ Build #${BUILD_NUMBER} failed! Check Jenkins logs. 🔍"
-    }
-    always {
-      slackSend channel: '#all-owner-devops', message: "📢 Build #${BUILD_NUMBER} completed."
-    }
-  }
 }
