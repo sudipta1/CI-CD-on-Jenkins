@@ -75,8 +75,8 @@ stages {
         steps {
             withCredentials([string(credentialsId: 'sudipta1', variable: 'GITHUB_TOKEN')]) {
                 sh '''
-                    git config --global user.email "sudipta.nayak244@gmail.com"
-                    git config --global user.name "Sudipta Nayak"
+                    git config --local user.email "sudipta.nayak244@gmail.com"
+                    git config --local user.name "Sudipta Nayak"
                     BUILD_NUMBER=${BUILD_NUMBER}
                     sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-k8s/spring-boot-app-manifests/deployment.yml
                     git add java-maven-sonar-argocd-k8s/spring-boot-app-manifests/deployment.yml
