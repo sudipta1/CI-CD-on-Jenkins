@@ -29,7 +29,7 @@ stages {
     }
     stage('Static Code Analysis') {
       environment {
-        SONAR_URL = "https://21d5-171-61-141-114.ngrok-free.app/"
+        SONAR_URL = "https://2430-171-61-141-114.ngrok-free.app/"
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
