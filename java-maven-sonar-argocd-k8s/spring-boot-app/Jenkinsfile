@@ -37,14 +37,7 @@ stages {
         }
       }
     }
-    stage('Install AWS CLI') {
-      steps {
-        sh '''
-          apt-get update && apt-get install -y awscli
-          aws --version
-        '''
-      }
-    }
+
     stage('Configure AWS CLI') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
