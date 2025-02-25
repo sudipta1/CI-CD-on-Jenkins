@@ -1,16 +1,15 @@
 # CI-CD-on-Jenkins
 # Jenkins Pipeline for Java based application using Maven, SonarQube, Argo CD, Helm and Kubernetes
 
-![Screenshot 2023-03-28 at 9 38 09 PM](https://user-images.githubusercontent.com/43399466/228301952-abc02ca2-9942-4a67-8293-f76647b6f9d8.png)
-
 
 Here are the step-by-step details to set up an end-to-end Jenkins pipeline for a Java application using SonarQube, Argo CD, Helm, and Kubernetes:
 
 Prerequisites:
 
    -  Java application code hosted on a Git repository
-   -  Jenkins server (Local or on EC2)
-   -  Kubernetes cluster (Minikube)
+   -  Jenkins server (EC2)
+   -  Sonarqube server (EC2)
+   -  Kubernetes cluster (EKS)
    -  Helm package manager
    -  Argo CD
 
@@ -19,8 +18,10 @@ Steps:
     1. Install the necessary Jenkins plugins:
        1.1 Git plugin
        1.2 Maven Integration plugin
-       1.3 Pipeline plugin
-       1.4 Kubernetes Continuous Deploy plugin
+       1.3 Sonar Plugin
+       1.4 Pipeline plugin
+       1.5 Docker Pipeline
+       1.6 Kubernetes Continuous Deploy plugin
 
     2. Create a new Jenkins pipeline:
        2.1 In Jenkins, create a new pipeline job and configure it with the Git repository URL for the Java application.
