@@ -75,7 +75,7 @@ stages {
         steps {
             withCredentials([string(credentialsId: 'sudipta1', variable: 'GITHUB_TOKEN')]) {
                 sh '''
-                    git config --global --add safe.directory /var/lib/jenkins/workspace/newci-cd
+                    git config --global --add safe.directory /var/lib/jenkins/workspace/ci-cdv2
                     git config --global user.email "sudipta.nayak244@gmail.com"
                     git config --global user.name "Sudipta Nayak"
                     BUILD_NUMBER=${BUILD_NUMBER}
