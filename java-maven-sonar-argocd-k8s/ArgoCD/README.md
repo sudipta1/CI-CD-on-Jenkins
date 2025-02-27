@@ -8,8 +8,8 @@ We will Install ArgoCD by using Helm :
 
 Create a Secret file on argocd namespace : 
 
-kubectl create secret docker-registry ecr-secret \back_slash
-  --docker-server=365657944743.dkr.ecr.us-east-1.amazonaws.com \back_slash
-  --docker-username=AWS \back_slash
-  --docker-password=$(aws ecr get-login-password --region us-east-1) \back_slash
+kubectl create secret docker-registry ecr-secret \
+  --docker-server=365657944743.dkr.ecr.us-east-1.amazonaws.com \
+  --docker-username=AWS \
+  --docker-password=$(aws ecr get-login-password --region us-east-1) \
   --namespace argocd
