@@ -29,7 +29,7 @@ stages {
     }
     stage('Static Code Analysis') {
       environment {
-        SONAR_URL = "https://a751-122-182-233-154.ngrok-free.app/"
+        SONAR_URL = "https://3730-122-182-233-154.ngrok-free.app/"
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -75,7 +75,7 @@ stages {
         steps {
             withCredentials([string(credentialsId: 'sudipta1', variable: 'GITHUB_TOKEN')]) {
                 sh '''
-                    git config --global --add safe.directory /var/lib/jenkins/workspace/ci-cdv2
+                    git config --global --add safe.directory '*'
                     git config --global user.email "sudipta.nayak244@gmail.com"
                     git config --global user.name "Sudipta Nayak"
                     BUILD_NUMBER=${BUILD_NUMBER}
