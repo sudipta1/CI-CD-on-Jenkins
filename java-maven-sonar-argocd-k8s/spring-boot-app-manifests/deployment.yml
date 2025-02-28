@@ -5,7 +5,7 @@ metadata:
   labels:
     app: spring-boot-app
 spec:
-  replicas: 2
+  replicas: 6
   selector:
     matchLabels:
       app: spring-boot-app
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: 365657944743.dkr.ecr.us-east-1.amazonaws.com/ultimateci-cd:2
+        image: 365657944743.dkr.ecr.us-east-1.amazonaws.com/ultimateci-cd:6
         ports:
         - containerPort: 8080
       imagePullSecrets:
