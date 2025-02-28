@@ -17,7 +17,7 @@ stages {
       steps {
         sh 'echo passed'
         //git branch: 'main', url: 'https://github.com/sudipta1/CI-CD-on-Jenkins-ArgoCD'
-        sh 'ls -lR'
+       // sh 'ls -lR'
       }
     }
     stage('Build and Test') {
